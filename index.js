@@ -25,7 +25,11 @@ app.use(corser.create())
 const httpServer = http.createServer(app);
 const httpsServer = https.createServer(options, app);
 
-console.log(app.routes);
+app._router.stack.forEach(function(r){
+  if (r.route && r.route.path){
+    console.log(r.route.path)
+  }
+})
 
 httpServer.listen(PORT - 1, () => {
   console.log(`HTTP listening on ${PORT - 1}.`)
