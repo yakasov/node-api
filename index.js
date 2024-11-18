@@ -1,6 +1,7 @@
 const express = require("express");
 const cors = require("cors");
 const corser = require("corser");
+const http = require("http");
 const https = require("https");
 const fs = require("fs");
 const mecRoutes = require("./mec/routes");
@@ -10,7 +11,7 @@ const certificate = fs.readFileSync('./sslcert/selfsigned.crt', 'utf8');
 const options = { cert: certificate, key: privateKey }
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = 3000;
 
 app.use(express.json());
 app.use(cors());
@@ -21,7 +22,12 @@ app.get("/status", (req, res) => {
 app.use("/mec", mecRoutes);
 app.use(corser.create())
 
-const server = https.createServer(options, app);
-server.listen(PORT, () => {
+const httpServer = http.createServer(app);
+const httpsServer = https.createServer(options, app);
+
+httpServer.listen(PORT - 1, () => {
+  console.log(`HTTP listening on ${PORT - 1}.`)
+})
+httpsServer.listen(PORT, () => {
   console.log(`HTTPS listening on ${PORT}.`)
 })
