@@ -1,6 +1,5 @@
 const express = require("express");
 const cors = require("cors");
-const corser = require("corser");
 const http = require("http");
 const https = require("https");
 const fs = require("fs");
@@ -27,7 +26,6 @@ app.get("/status", (req, res) => {
   res.send({ Status: "Running" });
 });
 app.use("/mec/*", mecRoutes);
-app.use(corser.create())
 app.options('*', cors());
 
 const httpsServer = https.createServer(options, app);
