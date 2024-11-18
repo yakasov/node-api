@@ -22,15 +22,9 @@ app.get("/status", (req, res) => {
 });
 app.use("/mec/*", mecRoutes);
 app.use(corser.create())
+app.options('*', cors());
 
-const httpServer = http.createServer(app);
 const httpsServer = https.createServer(options, app);
-
-app._router.stack.forEach(function(r){
-  if (r.route && r.route.path){
-    console.log(r.route.path)
-  }
-})
 
 // Redirect all HTTP traffic to HTTPS
 app.use((req, res, next) => {
