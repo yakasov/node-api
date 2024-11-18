@@ -5,33 +5,29 @@ const https = require("https");
 const fs = require("fs");
 const mecRoutes = require("./mec/routes");
 
-const privateKey  = fs.readFileSync('./sslcert/server.key', 'utf8');
-const certificate = fs.readFileSync('./sslcert/server.crt', 'utf8');
-const options = { cert: certificate, key: privateKey }
+const privateKey = fs.readFileSync("./sslcert/server.key", "utf8");
+const certificate = fs.readFileSync("./sslcert/server.crt", "utf8");
+const options = { cert: certificate, key: privateKey };
 
 const app = express();
 const HTTP_PORT = 80;
 const HTTPS_PORT = 443;
 
 app.use(express.json());
-app.use(cors(
-  {
-    origin: 'https://yakasov.github.io',
-    methods: ['GET', 'POST', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization'],
-  }
-));
-app.options('*', cors());
+app.use(
+  cors({
+    origin: "https://yakasov.github.io",
+    methods: ["GET", "POST", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+  })
+);
+app.options("*", cors());
 
 app.use((req, res, next) => {
-  if (req.method === 'OPTIONS') {
-      res.header('Access-Control-Allow-Origin', 'https://yakasov.github.io');
-      res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
-      res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-      res.sendStatus(204); 
-  } else {
-      next();
-  }
+  res.header("Access-Control-Allow-Origin", "https://yakasov.github.io");
+  res.header("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+  res.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
+  next();
 });
 
 app.get("/status", (req, res) => {
@@ -43,20 +39,22 @@ const httpsServer = https.createServer(options, app);
 
 // Redirect all HTTP traffic to HTTPS
 app.use((req, res, next) => {
-  if (req.headers['x-forwarded-proto'] !== 'https') {
-      return res.redirect(`https://${req.headers.host}${req.url}`);
+  if (req.headers["x-forwarded-proto"] !== "https") {
+    return res.redirect(`https://${req.headers.host}${req.url}`);
   }
   next();
 });
 
-http.createServer((req, res) => {
-  const host = req.headers.host || 'jmcd.uk';
-  const redirectTo = `https://${host}${req.url}`;
-  res.writeHead(301, { Location: redirectTo });
-  res.end();
-}).listen(HTTP_PORT, () => {
-  console.log(`HTTP listening on ${HTTP_PORT} and redirecting to HTTPS.`);
-});
+http
+  .createServer((req, res) => {
+    const host = req.headers.host || "jmcd.uk";
+    const redirectTo = `https://${host}${req.url}`;
+    res.writeHead(301, { Location: redirectTo });
+    res.end();
+  })
+  .listen(HTTP_PORT, () => {
+    console.log(`HTTP listening on ${HTTP_PORT} and redirecting to HTTPS.`);
+  });
 httpsServer.listen(HTTPS_PORT, () => {
-  console.log(`HTTPS listening on ${HTTPS_PORT}.`)
-})
+  console.log(`HTTPS listening on ${HTTPS_PORT}.`);
+});
