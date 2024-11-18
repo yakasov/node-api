@@ -21,12 +21,12 @@ app.use(cors(
     allowedHeaders: ['Content-Type', 'Authorization'],
   }
 ));
+app.options('*', cors());
 
 app.get("/status", (req, res) => {
   res.send({ Status: "Running" });
 });
 app.use("/mec/*", mecRoutes);
-app.options('*', cors());
 
 const httpsServer = https.createServer(options, app);
 
