@@ -7,8 +7,8 @@ const fs = require("fs");
 const serveIndex = require("serve-index");
 const mecRoutes = require("./mec/routes");
 
-const privateKey  = fs.readFileSync('./sslcert/selfsigned.key', 'utf8');
-const certificate = fs.readFileSync('./sslcert/selfsigned.crt', 'utf8');
+const privateKey  = fs.readFileSync('./sslcert/server.key', 'utf8');
+const certificate = fs.readFileSync('./sslcert/server.pem', 'utf8');
 const options = { cert: certificate, key: privateKey }
 
 const app = express();
