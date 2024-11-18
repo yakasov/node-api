@@ -1,15 +1,17 @@
 const express = require("express");
 const cors = require("cors");
+const https = require("https");
 const mecRoutes = require("./mec/routes");
+
+const privateKey  = fs.readFileSync('./sslcert/server.key', 'utf8');
+const certificate = fs.readFileSync('./sslcert/server.crt', 'utf8');
+const options = { cert: certificate, key: privateKey }
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
 app.use(express.json());
 app.use(cors());
-app.listen(PORT, () => {
-  console.log(`Listening on port ${PORT}`);
-});
 
 app.get("/status", (req, res) => {
   res.send({ Status: "Running" });
@@ -24,3 +26,8 @@ var allowCrossDomain = function (req, res, next) {
   next();
 };
 app.use(allowCrossDomain);
+
+const server = https.createServer(options, app);
+server.listen(PORT, () => {
+  console.log(`HTTPS listening on ${PORT}.`)
+})
