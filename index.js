@@ -15,7 +15,13 @@ const HTTP_PORT = 80;
 const HTTPS_PORT = 443;
 
 app.use(express.json());
-app.use(cors());
+app.use(cors(
+  {
+    origin: 'https://yakasov.github.io',
+    methods: ['GET', 'POST', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+  }
+));
 
 app.get("/status", (req, res) => {
   res.send({ Status: "Running" });
