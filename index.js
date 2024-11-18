@@ -6,7 +6,7 @@ const fs = require("fs");
 const mecRoutes = require("./mec/routes");
 
 const privateKey  = fs.readFileSync('./sslcert/server.key', 'utf8');
-const certificate = fs.readFileSync('./sslcert/server.pem', 'utf8');
+const certificate = fs.readFileSync('./sslcert/server.crt', 'utf8');
 const options = { cert: certificate, key: privateKey }
 
 const app = express();
@@ -22,6 +22,17 @@ app.use(cors(
   }
 ));
 app.options('*', cors());
+
+app.use((req, res, next) => {
+  if (req.method === 'OPTIONS') {
+      res.header('Access-Control-Allow-Origin', 'https://yakasov.github.io');
+      res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+      res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+      res.sendStatus(204); 
+  } else {
+      next();
+  }
+});
 
 app.get("/status", (req, res) => {
   res.send({ Status: "Running" });
