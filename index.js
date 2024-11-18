@@ -19,7 +19,7 @@ app.use(cors());
 app.get("/status", (req, res) => {
   res.send({ Status: "Running" });
 });
-app.use("/mec", mecRoutes);
+app.use("/mec/*", mecRoutes);
 app.use(corser.create())
 
 const httpServer = http.createServer(app);
