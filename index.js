@@ -1,10 +1,12 @@
 const express = require("express");
 const cors = require("cors");
+const corser = require("corser");
 const https = require("https");
+const fs = require("fs");
 const mecRoutes = require("./mec/routes");
 
-const privateKey  = fs.readFileSync('./sslcert/server.key', 'utf8');
-const certificate = fs.readFileSync('./sslcert/server.crt', 'utf8');
+const privateKey  = fs.readFileSync('./sslcert/selfsigned.key', 'utf8');
+const certificate = fs.readFileSync('./sslcert/selfsigned.crt', 'utf8');
 const options = { cert: certificate, key: privateKey }
 
 const app = express();
@@ -17,15 +19,7 @@ app.get("/status", (req, res) => {
   res.send({ Status: "Running" });
 });
 app.use("/mec", mecRoutes);
-
-app.options("*", cors());
-var allowCrossDomain = function (req, res, next) {
-  res.header("Access-Control-Allow-Origin", "*");
-  res.header("Access-Control-Allow-Methods", "GET, PUT, POST, DELETE, OPTIONS");
-  res.header("Access-Control-Allow-Headers", "Content-Type");
-  next();
-};
-app.use(allowCrossDomain);
+app.use(corser.create())
 
 const server = https.createServer(options, app);
 server.listen(PORT, () => {
