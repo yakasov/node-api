@@ -4,6 +4,7 @@ const corser = require("corser");
 const http = require("http");
 const https = require("https");
 const fs = require("fs");
+const serveIndex = require("serve-index");
 const mecRoutes = require("./mec/routes");
 
 const privateKey  = fs.readFileSync('./sslcert/selfsigned.key', 'utf8');
@@ -15,6 +16,7 @@ const PORT = 3000;
 
 app.use(express.json());
 app.use(cors());
+app.use("/.well-known", express.static(".well-known"), serveIndex(".well-known"))
 
 app.get("/status", (req, res) => {
   res.send({ Status: "Running" });
