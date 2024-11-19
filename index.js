@@ -33,7 +33,7 @@ app.use((req, res, next) => {
 app.get("/status", (req, res) => {
   res.send({ Status: "Running" });
 });
-app.use("/mec/*", mecRoutes);
+app.use("/mec", mecRoutes);
 
 const httpsServer = https.createServer(options, app);
 
