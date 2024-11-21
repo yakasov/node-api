@@ -30,4 +30,5 @@ function getCache(req, res) {
 
 module.exports = {
   getCards,
+  getCache
 };
