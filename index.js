@@ -4,6 +4,7 @@ const http = require("http");
 const https = require("https");
 const fs = require("fs");
 const mecRoutes = require("./mec/routes");
+const mtgRoutes = require("./mtg/routes");
 
 const privateKey = fs.readFileSync("./sslcert/server.key", "utf8");
 const certificate = fs.readFileSync("./sslcert/server.crt", "utf8");
@@ -16,24 +17,18 @@ const HTTPS_PORT = 443;
 app.use(express.json());
 app.use(
   cors({
-    origin: "https://yakasov.github.io",
+    origin: ["https://yakasov.github.io", "http://localhost:5173"],
     methods: ["GET", "POST", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
 app.options("*", cors());
 
-app.use((req, res, next) => {
-  res.header("Access-Control-Allow-Origin", "https://yakasov.github.io");
-  res.header("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
-  res.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
-  next();
-});
-
 app.get("/status", (req, res) => {
   res.send({ Status: "Running" });
 });
 app.use("/mec", mecRoutes);
+app.use("/mtg", mtgRoutes);
 
 const httpsServer = https.createServer(options, app);
 
