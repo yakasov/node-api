@@ -28,7 +28,30 @@ function getCache(req, res) {
   }
 }
 
+function saveCards(req, res) {
+  const data = JSON.parse(
+    fs.readFileSync(
+      `../bot-rewrite-3-js/resources/mtg/mtgCards.json`,
+      "utf-8"
+    )
+  );
+
+  const user = req.body.user;
+  const newCards = req.body.cards;
+
+  Object.entries(newCards).forEach(([s, cs]) => {
+    cs.forEach((c) => {
+      if (!data[user][s].includes(c)) {
+        data[user][s].push(c);
+      }
+    })
+  })
+
+  res.status(200).send({ data });
+}
+
 module.exports = {
   getCards,
-  getCache
+  getCache,
+  saveCards
 };
