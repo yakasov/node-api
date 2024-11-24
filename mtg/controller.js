@@ -48,7 +48,7 @@ function saveCards(req, res) {
   Object.entries(newCards).forEach(([s, cs]) => {
     cs.forEach((c) => {
       const sLower = s.toLowerCase();
-      const cId = mtgCache[sLower][c].id;
+      const cId = cache[sLower][c].id;
 
       if (!data[user]) {
         data[user] = {};
