@@ -64,7 +64,7 @@ function saveCards(req, res) {
           data[user][sLower].push(cId);
         }
       } catch (e) {
-        errors.push({ s, c, e })
+        errors.push({ s, c, e: e.message })
       }
     })
   })
