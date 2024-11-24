@@ -41,6 +41,14 @@ function saveCards(req, res) {
 
   Object.entries(newCards).forEach(([s, cs]) => {
     cs.forEach((c) => {
+      if (!data[user]) {
+        data[user] = {};
+      }
+
+      if (!data[user][s]) {
+        data[user][s] = [];
+      }
+
       if (!data[user][s].includes(c)) {
         data[user][s].push(c);
       }
