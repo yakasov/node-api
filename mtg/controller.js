@@ -35,22 +35,31 @@ function saveCards(req, res) {
       "utf-8"
     )
   );
+  const cache = JSON.parse(
+    fs.readFileSync(
+      `../bot-rewrite-3-js/resources/mtg/mtgCache.json`,
+      "utf-8"
+    )
+  );
 
   const user = req.body.user;
   const newCards = req.body.cards;
 
   Object.entries(newCards).forEach(([s, cs]) => {
     cs.forEach((c) => {
+      const sLower = s.toLowerCase();
+      const cId = mtgCache[sLower][c].id;
+
       if (!data[user]) {
         data[user] = {};
       }
 
-      if (!data[user][s]) {
-        data[user][s] = [];
+      if (!data[user][sLower]) {
+        data[user][sLower] = [];
       }
 
-      if (!data[user][s].includes(c)) {
-        data[user][s].push(c);
+      if (!data[user][sLower].includes(cId)) {
+        data[user][sLower].push(cId);
       }
     })
   })
