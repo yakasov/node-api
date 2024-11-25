@@ -12,6 +12,7 @@
     "cors": "^2.8.5",
     "corser": "^2.0.1",
     "express": "^4.21.1",
+    "node-postgres": "^0.6.2",
     "serve-index": "^1.9.1"
   }
 }
