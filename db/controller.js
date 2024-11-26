@@ -1,17 +1,23 @@
-const pg = require("node-postgres");
-const { Pool } = pg;
+const mysql = require("mysql");
 
-const pool = new Pool({
+const connection = mysql.createConnection({
   user: "node",
   host: "localhost",
-  port: 5432,
   database: "data"
 })
 
 async function getConnection(req, res) {
   try {
-    const data = await pool.query('SELECT NOW()');
-    res.status(200).send({ data });
+    let response = null;
+
+    connection.connect();
+    connection.query('SELECT 1 + 1 AS solution', function (error, results, fields) {
+      if (error) throw error;
+      response = 'The solution is: ', results[0].solution;
+    });
+    connection.end();
+
+    res.status(200).send({ response });
   } catch (e) {
     res.status(500).send({ Status: e.message });
   }
