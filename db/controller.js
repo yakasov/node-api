@@ -23,7 +23,7 @@ async function getTables() {
 }
 
 async function createTableIfNotExists(id) {
-  if ((await getTables()).includes(id)) {
+  if ((await getTables()).includes(`${id}`)) {
     return;
   }
 
