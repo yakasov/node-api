@@ -7,8 +7,8 @@ const dbRoutes = require("./db/routes");
 const mecRoutes = require("./mec/routes");
 const mtgRoutes = require("./mtg/routes");
 
-const privateKey = fs.readFileSync("./sslcert/server.key", "utf8");
-const certificate = fs.readFileSync("./sslcert/server.crt", "utf8");
+const privateKey = fs.readFileSync("./sslcert/key.pem", "utf8");
+const certificate = fs.readFileSync("./sslcert/selfsigned.pem", "utf8");
 const options = { cert: certificate, key: privateKey };
 
 const app = express();
