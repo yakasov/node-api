@@ -6,16 +6,11 @@ const connection = mysql.createConnection({
   database: "data"
 })
 
-async function getConnection(req, res) {
+async function testConnection(req, res) {
   try {
-    let response = null;
-
-    connection.connect();
-    connection.query('SELECT 1 + 1 AS solution', function (error, results, fields) {
-      if (error) throw error;
-      response = 'The solution is: ', results[0].solution;
-    });
-    connection.end();
+    const response = (await connection).execute(
+      "SELECT * FROM `data.test"
+    )
 
     res.status(200).send({ response });
   } catch (e) {
@@ -24,5 +19,5 @@ async function getConnection(req, res) {
 }
 
 module.exports = {
-  getConnection,
+  testConnection,
 };
