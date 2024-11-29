@@ -48,7 +48,7 @@ async function transferCache(req, res) {
 
   Object.keys(cache).forEach((set) => {
     Object.entries(cache[set]).forEach(async ([k, c]) => {
-      const query = `INSERT INTO cache VALUES (${f(c.canBeFoil)}, '${c.colours.join(",")}', '${c.flavour_text ?? ""}', ${f(c.foil)}, '${c.frameEffects && c.frameEffects.length ? c.frameEffects.join(",") : ""}', '${c.id}', '${c.image}', '${c.keywords.join(",")}', ${c.legal}, ${f(c.local)}, ${f(c.mana_cost)}, '${c.name}', '${k}', '${c.oracle_text}', '${c.power}', ${c.price}, ${c.price_foil}, '${c.rarity}', '${c.set}', '${c.set_name}', '${c.toughness}', '${c.type_line}', '${c.url}')`;
+      const query = `INSERT INTO cache VALUES (${f(c.canBeFoil)}, '${c.colours.join(",")}', '${JSON.stringify(c.flavour_text ?? "")}', ${f(c.foil)}, '${c.frameEffects && c.frameEffects.length ? c.frameEffects.join(",") : ""}', '${c.id}', '${c.image}', '${c.keywords.join(",")}', ${c.legal}, ${f(c.local)}, ${f(c.mana_cost)}, '${c.name}', '${k}', '${JSON.stringify(c.oracle_text)}', '${c.power}', ${c.price}, ${c.price_foil}, '${c.rarity}', '${c.set}', '${c.set_name}', '${c.toughness}', '${c.type_line}', '${c.url}')`;
       await cn.execute(query);
       return;
     })
