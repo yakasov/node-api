@@ -1,3 +1,4 @@
+const fs = require("fs");
 const mysql = require("mysql2/promise");
 
 const conn = mysql.createConnection({
@@ -44,9 +45,9 @@ async function transferCache(req, res) {
     )
   );
 
-  cache.forEach((set) => {
-    cache[set].forEach((c) => {
-      const query = `INSERT INTO cache VALUES (${f(c.canBeFoil)}, '${c.colours}', '${c.flavour_text}', ${f(c.foil)}, '${c.frameEffects}', '${c.id}', '${c.image}', '${c.keywords}', ${c.legal}, ${f(c.local)}, ${f(c.mana_cost)}, '${c.name}', '${c.number}', '${c.oracle_text}', ${c.power}, ${c.price}, ${c.price_foil}, '${c.rarity}', '${c.set}', '${c.set_name}', ${c.toughness}, '${c.type_line}', '${c.url}')`;
+  Object.keys(cache).forEach((set) => {
+    Object.entries(cache[set]).forEach(([k, c]) => {
+      const query = `INSERT INTO cache VALUES (${f(c.canBeFoil)}, '${c.colours.join(",")}', '${c.flavour_text ?? ""}', ${f(c.foil)}, '${c.frameEffects.length ? c.frameEffects.join(",") : ""}', '${c.id}', '${c.image}', '${c.keywords.join(",")}', ${c.legal}, ${f(c.local)}, ${f(c.mana_cost)}, '${c.name}', '${k}', '${c.oracle_text}', ${c.power}, ${c.price}, ${c.price_foil}, '${c.rarity}', '${c.set}', '${c.set_name}', ${c.toughness}, '${c.type_line}', '${c.url}')`;
       console.log(query);
       return;
     })
