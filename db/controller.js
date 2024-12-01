@@ -60,15 +60,15 @@ async function transferCache(req, res) {
 
   Object.keys(cache).forEach((set) => {
     Object.entries(cache[set]).forEach(async ([k, c]) => {
-      const query = `
-        INSERT INTO cache (
-          can_be_foil, colours, flavour_text, foil, frame_effects,
-          id, image, keywords, legal, local,
-          mana_cost, name, oracle_text, power, price,
-          price_foil, rarity, set, set_name, toughness,
-          type_line, url
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-      `;
+      const query = "\
+        INSERT INTO `cache` (\
+          can_be_foil, colours, flavour_text, foil, frame_effects,\
+          id, image, keywords, legal, local,\
+          mana_cost, `name`, oracle_text, power, price,\
+          price_foil, rarity, `set`, set_name, toughness,\
+          type_line, url\
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)\
+      ";
       const values = [
         c.canBeFoil ? 1 : 0,
         c.colours ? c.colours.join(",") : "",
