@@ -45,14 +45,6 @@ async function transferCache(req, res) {
     return 0;
   }
 
-  const sanitizeString = (str) =>
-    str
-      ? str
-          .replace(/'/g, "''")
-          .replace(/\n/g, "\\n")
-          .replace(/[\u0000-\u001F\u007F-\u009F]/g, "")
-      : null;
-
   const cache = JSON.parse(
     fs.readFileSync(`../bot-rewrite-3-js/resources/mtg/mtgCache.json`, "utf-8")
   );
@@ -72,7 +64,7 @@ async function transferCache(req, res) {
       const values = [
         c.canBeFoil ? 1 : 0,
         c.colours ? c.colours.join(",") : "",
-        sanitizeString(c.flavour_text),
+        c.flavour_text || null,
         c.foil ? 1 : 0,
         c.frameEffects && c.frameEffects.length
           ? c.frameEffects.join(",")
@@ -85,7 +77,7 @@ async function transferCache(req, res) {
         c.mana_cost ? c.mana_cost : null,
         c.name || null,
         k || null,
-        sanitizeString(c.oracle_text),
+        c.oracle_text || null,
         c.power || null,
         c.price || 0,
         c.price_foil || 0,
