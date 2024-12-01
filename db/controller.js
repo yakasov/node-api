@@ -44,6 +44,15 @@ async function transferCache(req, res) {
     }
     return 0;
   }
+
+  const sanitizeString = (str) =>
+    str
+      ? str
+          .replace(/'/g, "''")
+          .replace(/\n/g, "\\n") 
+          .replace(/[\u0000-\u001F\u007F-\u009F]/g, "")
+      : null;
+
   const cache = JSON.parse(
     fs.readFileSync(`../bot-rewrite-3-js/resources/mtg/mtgCache.json`, "utf-8")
   );
@@ -54,19 +63,19 @@ async function transferCache(req, res) {
       const query = `INSERT INTO cache VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
       const values = [
         c.canBeFoil ? 1 : 0,
-        c.colours ? c.colours.join(",") : "", // Fallback to empty string if undefined
-        c.flavour_text ? c.flavour_text.replace(/'/g, "''").replace(/\n/g, "\\n") : null, // Use null for undefined
+        c.colours ? c.colours.join(",") : "", 
+        sanitizeString(c.flavour_text),
         c.foil ? 1 : 0,
         c.frameEffects && c.frameEffects.length ? c.frameEffects.join(",") : null,
         c.id || null,
         c.image || null,
-        c.keywords ? c.keywords.join(",") : "", // Empty string if undefined
+        c.keywords ? c.keywords.join(",") : "", 
         c.legal ? 1 : 0,
         c.local ? 1 : 0,
         c.mana_cost ? c.mana_cost : null,
         c.name || null,
         k || null,
-        c.oracle_text ? c.oracle_text.replace(/'/g, "''").replace(/\n/g, "\\n") : null,
+        sanitizeString(c.oracle_text),
         c.power || null,
         c.price || 0,
         c.price_foil || 0,
