@@ -49,7 +49,7 @@ async function transferCache(req, res) {
     str
       ? str
           .replace(/'/g, "''")
-          .replace(/\n/g, "\\n") 
+          .replace(/\n/g, "\\n")
           .replace(/[\u0000-\u001F\u007F-\u009F]/g, "")
       : null;
 
@@ -60,16 +60,26 @@ async function transferCache(req, res) {
 
   Object.keys(cache).forEach((set) => {
     Object.entries(cache[set]).forEach(async ([k, c]) => {
-      const query = `INSERT INTO cache VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+      const query = `
+        INSERT INTO cache (
+          can_be_foil, colours, flavour_text, foil, frame_effects,
+          id, image, keywords, legal, local,
+          mana_cost, name, oracle_text, power, price,
+          price_foil, rarity, set, set_name, toughness,
+          type_line, url
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      `;
       const values = [
         c.canBeFoil ? 1 : 0,
-        c.colours ? c.colours.join(",") : "", 
+        c.colours ? c.colours.join(",") : "",
         sanitizeString(c.flavour_text),
         c.foil ? 1 : 0,
-        c.frameEffects && c.frameEffects.length ? c.frameEffects.join(",") : null,
+        c.frameEffects && c.frameEffects.length
+          ? c.frameEffects.join(",")
+          : null,
         c.id || null,
         c.image || null,
-        c.keywords ? c.keywords.join(",") : "", 
+        c.keywords ? c.keywords.join(",") : "",
         c.legal ? 1 : 0,
         c.local ? 1 : 0,
         c.mana_cost ? c.mana_cost : null,
@@ -86,7 +96,7 @@ async function transferCache(req, res) {
         c.type_line || null,
         c.url || null,
       ];
-  
+
       try {
         await cn.execute(query, values);
       } catch (err) {
