@@ -54,30 +54,37 @@ async function transferCache(req, res) {
       const query = `INSERT INTO cache VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
       const values = [
         c.canBeFoil ? 1 : 0,
-        c.colours.join(","),
-        c.flavour_text ? c.flavour_text.replace(/'/g, "''").replace(/\n/g, "\\n") : "",
+        c.colours ? c.colours.join(",") : "", // Fallback to empty string if undefined
+        c.flavour_text ? c.flavour_text.replace(/'/g, "''").replace(/\n/g, "\\n") : null, // Use null for undefined
         c.foil ? 1 : 0,
-        c.frameEffects && c.frameEffects.length ? c.frameEffects.join(",") : "",
-        c.id,
-        c.image,
-        c.keywords.join(","),
+        c.frameEffects && c.frameEffects.length ? c.frameEffects.join(",") : null,
+        c.id || null,
+        c.image || null,
+        c.keywords ? c.keywords.join(",") : "", // Empty string if undefined
         c.legal ? 1 : 0,
         c.local ? 1 : 0,
-        c.mana_cost ? 1 : 0,
-        c.name,
-        k,
-        c.oracle_text ? c.oracle_text.replace(/'/g, "''").replace(/\n/g, "\\n") : "",
-        c.power,
+        c.mana_cost ? c.mana_cost : null,
+        c.name || null,
+        k || null,
+        c.oracle_text ? c.oracle_text.replace(/'/g, "''").replace(/\n/g, "\\n") : null,
+        c.power || null,
         c.price || 0,
         c.price_foil || 0,
-        c.rarity,
-        c.set,
-        c.set_name,
-        c.toughness,
-        c.type_line,
-        c.url,
+        c.rarity || null,
+        c.set || null,
+        c.set_name || null,
+        c.toughness || null,
+        c.type_line || null,
+        c.url || null,
       ];
-      await cn.execute(query, values);
+  
+      try {
+        await cn.execute(query, values);
+      } catch (err) {
+        console.error("Error executing query:", err);
+        console.error("Query:", query);
+        console.error("Values:", values);
+      }
     });
   });
 }
