@@ -40,7 +40,7 @@ async function saveCards(req, res) {
       ) (\
        SELECT id, 1, ?\
        FROM cache\
-       WHERE set = ? AND number = ?)\
+       WHERE `set` = ? AND number = ?)\
     ";
     const values = [card.set, card.set, card.id];
 
