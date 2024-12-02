@@ -22,7 +22,7 @@ async function getCards(req, res) {
   const cards = {};
 
   for (const table of tables) {
-    const [results, ] = await cn.query("SELECT * FROM " + table);
+    const [results, ] = await cn.query("SELECT * FROM `" + table + "`");
     cards[table] = results;
   }
 
