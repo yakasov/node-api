@@ -31,8 +31,6 @@ async function saveCards(req, res) {
       "` (`id` VARCHAR(255) NOT NULL, `owned` TINYINT(0), `set` VARCHAR(255) NOT NULL, PRIMARY KEY (`id`))"
   );
 
-  console.log(newCards);
-
   for (const card of newCards) {
     const query = "\
       INSERT INTO `" + user + "` (\
@@ -42,7 +40,7 @@ async function saveCards(req, res) {
        FROM cache\
        WHERE `set` = ? AND number = ?)\
     ";
-    const values = [card.set, card.set, card.id];
+    const values = [card.set.toLowerCase(), card.set, card.id];
 
     await cn.query(query, values);
   }
