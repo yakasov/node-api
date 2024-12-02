@@ -1,75 +1,37 @@
-const fs = require("fs");
+const mysql = require("mysql2/promise");
 
-function getCards(req, res) {
-  try {
-    const data = JSON.parse(
-      fs.readFileSync(
-        `../bot-rewrite-3-js/resources/mtg/mtgCards.json`,
-        "utf-8"
-      )
-    );
-    res.status(200).send({ data });
-  } catch {
-    res.status(404).send({ Status: "No file found." });
-  }
-}
+const conn = mysql.createConnection({
+  user: "node",
+  host: "localhost",
+  database: "data",
+});
 
-function getCache(req, res) {
-  try {
-    const data = JSON.parse(
-      fs.readFileSync(
-        `../bot-rewrite-3-js/resources/mtg/mtgCache.json`,
-        "utf-8"
-      )
-    );
-    res.status(200).send({ data });
-  } catch {
-    res.status(404).send({ Status: "No file found." });
-  }
-}
-
-function saveCards(req, res) {
-  const data = JSON.parse(
-    fs.readFileSync(
-      `../bot-rewrite-3-js/resources/mtg/mtgCards.json`,
-      "utf-8"
-    )
-  );
-  const cache = JSON.parse(
-    fs.readFileSync(
-      `../bot-rewrite-3-js/resources/mtg/mtgCache.json`,
-      "utf-8"
-    )
-  );
-
+async function saveCards(req, res) {
   const user = req.body.user;
   const newCards = req.body.cards;
-  const errors = [];
 
-  Object.entries(newCards).forEach(([s, cs]) => {
-    cs.forEach((c) => {
-      try {
-        const sLower = s.toLowerCase();
-        const cId = cache[sLower][c].id;
+  const cn = await conn;
+  await cn.execute(
+    "CREATE TABLE `" +
+    user +
+      "` (`id` VARCHAR(255) NOT NULL, `owned` TINYINT(0), `set` VARCHAR(255) NOT NULL, PRIMARY KEY (`id`))"
+  );
 
-        if (!data[user]) {
-          data[user] = {};
-        }
+  for (const card of newCards) {
+    const query = "\
+      INSERT INTO `" + user + "` (\
+        id, owned, `set`\
+      ) (\
+       SELECT id, 1, '?'\
+       FROM cache\
+       WHERE id = ?)\
+    ";
+    const values = [card.set, card.id];
 
-        if (!data[user][sLower]) {
-          data[user][sLower] = [];
-        }
+    await cn.query(query, values);
+  }
 
-        if (!data[user][sLower].includes(cId)) {
-          data[user][sLower].push(cId);
-        }
-      } catch (e) {
-        errors.push({ s, c, e: e.message })
-      }
-    })
-  })
-
-  res.status(200).send({ data, errors });
+  res.status(200).send();
 }
 
 module.exports = {
