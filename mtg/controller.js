@@ -6,6 +6,20 @@ const conn = mysql.createConnection({
   database: "data",
 });
 
+async function getCache(req, res) {
+  const cn = await conn;
+  const [results, ] = await cn.query("\
+      SELECT image, flavour_text, oracle_text, name, number, id, `set`\
+      FROM cache\
+    ");
+
+  res.status(200).send({ results });
+}
+
+async function getCards(req, res) {
+  res.status(413).send({});
+}
+
 async function saveCards(req, res) {
   const user = req.body.user;
   const newCards = req.body.cards;
@@ -22,7 +36,7 @@ async function saveCards(req, res) {
       INSERT INTO `" + user + "` (\
         id, owned, `set`\
       ) (\
-       SELECT id, 1, '?'\
+       SELECT id, 1, ?\
        FROM cache\
        WHERE id = ?)\
     ";
@@ -35,5 +49,7 @@ async function saveCards(req, res) {
 }
 
 module.exports = {
+  getCache,
+  getCards,
   saveCards
 };
