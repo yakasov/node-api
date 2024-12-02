@@ -26,7 +26,7 @@ async function saveCards(req, res) {
 
   const cn = await conn;
   await cn.execute(
-    "CREATE TABLE `" +
+    "CREATE TABLE IF NOT EXISTS `" +
     user +
       "` (`id` VARCHAR(255) NOT NULL, `owned` TINYINT(0), `set` VARCHAR(255) NOT NULL, PRIMARY KEY (`id`))"
   );
