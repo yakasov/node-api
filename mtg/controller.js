@@ -35,7 +35,5 @@ async function saveCards(req, res) {
 }
 
 module.exports = {
-  getCards,
-  getCache,
   saveCards
 };
