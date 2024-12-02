@@ -17,7 +17,21 @@ async function getCache(req, res) {
 }
 
 async function getCards(req, res) {
-  res.status(413).send({});
+  const cn = await conn;
+  const tables = (await getTables(cn)).filter((t) => t.length === 18);
+  const cards = {};
+
+  for (const table of tables) {
+    const [results, ] = await cn.query("SELECT * FROM " + table);
+    cards[table] = results;
+  }
+
+  res.status(200).send({ cards });
+}
+
+async function getTables(cn) {
+  const [fields] = await cn.execute("SHOW TABLES");
+  return fields.map((e) => e.Tables_in_data);
 }
 
 async function saveCards(req, res) {
