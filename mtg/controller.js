@@ -47,7 +47,7 @@ async function saveCards(req, res) {
 
   for (const card of newCards) {
     const query = "\
-      INSERT INTO `" + user + "` (\
+      INSERT IGNORE INTO `" + user + "` (\
         id, owned, `set`\
       ) (\
        SELECT id, 1, ?\
