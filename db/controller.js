@@ -53,10 +53,10 @@ async function transferCache(req, res) {
         INSERT IGNORE INTO `cache` (\
           can_be_foil, colours, flavour_text, foil, frame_effects,\
           id, image, keywords, legal, local,\
-          mana_cost, `name`, oracle_text, power, price,\
+          mana_cost, `name`, number, oracle_text, power, price,\
           price_foil, rarity, `set`, set_name, toughness,\
           type_line, url\
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)\
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)\
       ";
       const values = [
         c.canBeFoil ? 1 : 0,
@@ -87,6 +87,7 @@ async function transferCache(req, res) {
       ];
       try {
         await cn.execute(query, values);
+        console.log(`Set: ${c.set}, number: ${k}`);
       } catch (err) {
         console.error("Error executing query:", err);
         console.error("Query:", query);
