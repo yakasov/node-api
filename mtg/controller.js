@@ -76,7 +76,7 @@ async function saveCards(req, res) {
 async function getImage(req, res) {
   const id = req.params.imageId;
   const image = fs.readFileSync(
-    `../bot-rewrite-3-js/resources/images/${id}.png`,
+    `../bot-rewrite-3-js/resources/mtg/images/${id}.png`,
     { encoding: "base64" }
   );
 
