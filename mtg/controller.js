@@ -1,13 +1,15 @@
 const mysql = require("mysql2/promise");
 
-const conn = mysql.createConnection({
-  user: "node",
-  host: "localhost",
-  database: "data",
-});
+function getCn() {
+  return mysql.createConnection({
+    user: "node",
+    host: "localhost",
+    database: "data",
+  });
+}
 
 async function getCache(req, res) {
-  const cn = await conn;
+  const cn = await getCn();
   const [results, ] = await cn.query("\
       SELECT image, flavour_text, oracle_text, name, number, id, `set`\
       FROM cache\
@@ -18,7 +20,7 @@ async function getCache(req, res) {
 }
 
 async function getCards(req, res) {
-  const cn = await conn;
+  const cn = await getCn();
   const tables = (await getTables(cn)).filter((t) => t.length === 18);
   const cards = {};
 
@@ -40,7 +42,7 @@ async function saveCards(req, res) {
   const user = req.body.user;
   const newCards = req.body.cards;
 
-  const cn = await conn;
+  const cn = await getCn();
   await cn.execute(
     "CREATE TABLE IF NOT EXISTS `" +
     user +

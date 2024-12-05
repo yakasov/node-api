@@ -1,11 +1,13 @@
 const fs = require("fs");
 const mysql = require("mysql2/promise");
 
-const conn = mysql.createConnection({
-  user: "node",
-  host: "localhost",
-  database: "data",
-});
+function getCn() {
+  return mysql.createConnection({
+    user: "node",
+    host: "localhost",
+    database: "data",
+  });
+}
 
 async function testConnection(req, res) {
   try {
@@ -18,7 +20,7 @@ async function testConnection(req, res) {
 }
 
 async function getTables() {
-  const [fields] = await (await conn).execute("SHOW TABLES");
+  const [fields] = await (await getCn()).execute("SHOW TABLES");
   return fields.map((e) => e.Tables_in_data);
 }
 
@@ -28,7 +30,7 @@ async function createTableIfNotExists(id) {
   }
 
   await (
-    await conn
+    await getCn()
   ).execute(
     "CREATE TABLE `" +
       id +
@@ -40,7 +42,7 @@ async function transferCache(req, res) {
   const cache = JSON.parse(
     fs.readFileSync(`../bot-rewrite-3-js/resources/mtg/mtgCache.json`, "utf-8")
   );
-  const cn = await conn;
+  const cn = await getCn();
 
   Object.keys(cache).forEach((set) => {
     Object.entries(cache[set]).forEach(async ([k, c]) => {
