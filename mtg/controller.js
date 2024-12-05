@@ -13,6 +13,7 @@ async function getCache(req, res) {
       FROM cache\
     ");
 
+  cn.destroy();
   res.status(200).send({ results });
 }
 
@@ -26,6 +27,7 @@ async function getCards(req, res) {
     cards[table] = results;
   }
 
+  cn.destroy();
   res.status(200).send({ cards });
 }
 
@@ -59,6 +61,7 @@ async function saveCards(req, res) {
     await cn.query(query, values);
   }
 
+  cn.destroy();
   res.status(200).send();
 }
 

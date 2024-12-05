@@ -37,16 +37,11 @@ async function createTableIfNotExists(id) {
 }
 
 async function transferCache(req, res) {
-  function f(bool) {
-    if (bool) {
-      return 1;
-    }
-    return 0;
-  }
   const cache = JSON.parse(
     fs.readFileSync(`../bot-rewrite-3-js/resources/mtg/mtgCache.json`, "utf-8")
   );
   const cn = await conn;
+
   Object.keys(cache).forEach((set) => {
     Object.entries(cache[set]).forEach(async ([k, c]) => {
       const query = "\
@@ -96,6 +91,7 @@ async function transferCache(req, res) {
     });
   });
 
+  cn.destroy();
   res.status(200).send();
 }
 
