@@ -1,3 +1,4 @@
+const fs = require("fs");
 const mysql = require("mysql2/promise");
 
 function getCn() {
@@ -10,10 +11,12 @@ function getCn() {
 
 async function getCache(req, res) {
   const cn = await getCn();
-  const [results, ] = await cn.query("\
+  const [results] = await cn.query(
+    "\
       SELECT image, flavour_text, oracle_text, name, number, id, `set`\
       FROM cache\
-    ");
+    "
+  );
 
   cn.destroy();
   res.status(200).send({ results });
@@ -25,7 +28,7 @@ async function getCards(req, res) {
   const cards = {};
 
   for (const table of tables) {
-    const [results, ] = await cn.query("SELECT * FROM `" + table + "`");
+    const [results] = await cn.query("SELECT * FROM `" + table + "`");
     cards[table] = results;
   }
 
@@ -45,13 +48,16 @@ async function saveCards(req, res) {
   const cn = await getCn();
   await cn.execute(
     "CREATE TABLE IF NOT EXISTS `" +
-    user +
+      user +
       "` (`id` VARCHAR(255) NOT NULL, `owned` TINYINT(0), `set` VARCHAR(255) NOT NULL, PRIMARY KEY (`id`))"
   );
 
   for (const card of newCards) {
-    const query = "\
-      INSERT IGNORE INTO `" + user + "` (\
+    const query =
+      "\
+      INSERT IGNORE INTO `" +
+      user +
+      "` (\
         id, owned, `set`\
       ) (\
        SELECT id, 1, ?\
@@ -67,8 +73,19 @@ async function saveCards(req, res) {
   res.status(200).send();
 }
 
+async function getImage(req, res) {
+  const id = req.params.imageId;
+  const image = fs.readFileSync(
+    `../bot-rewrite-3-js/resources/images/${id}.png`,
+    { encoding: "base64" }
+  );
+
+  res.status(200).send({ base64: image })
+}
+
 module.exports = {
   getCache,
   getCards,
-  saveCards
+  getImage,
+  saveCards,
 };
