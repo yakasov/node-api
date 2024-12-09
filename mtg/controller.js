@@ -63,7 +63,7 @@ async function saveCards(req, res) {
       "` (`id` VARCHAR(255) NOT NULL, `owned` TINYINT(0), `set` VARCHAR(255) NOT NULL, PRIMARY KEY (`id`))"
   );
 
-  res.status(200);
+  res.status(200).send();
 
   for (const card of newCards) {
     const query =
