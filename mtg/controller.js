@@ -1,12 +1,20 @@
 const fs = require("fs");
 const mysql = require("mysql2/promise");
 
+const runningImports = {};
+
 function getCn() {
   return mysql.createConnection({
     user: "node",
     host: "localhost",
     database: "data",
   });
+}
+
+async function getImportStatus(req, res) {
+  const importId = req.params.id;
+
+  res.status(201).send({ status: runningImports[importId] })
 }
 
 async function getCache(req, res) {
@@ -44,6 +52,9 @@ async function getTables(cn) {
 async function saveCards(req, res) {
   const user = req.body.user;
   const newCards = req.body.cards;
+  const importId = req.body.id;
+
+  runningImports[importId] = true;
 
   const cn = await getCn();
   await cn.execute(
@@ -51,6 +62,8 @@ async function saveCards(req, res) {
       user +
       "` (`id` VARCHAR(255) NOT NULL, `owned` TINYINT(0), `set` VARCHAR(255) NOT NULL, PRIMARY KEY (`id`))"
   );
+
+  res.status(200);
 
   for (const card of newCards) {
     const query =
@@ -70,7 +83,7 @@ async function saveCards(req, res) {
   }
 
   cn.destroy();
-  res.status(200).send();
+  runningImports[importId] = false;
 }
 
 async function getImage(req, res) {
@@ -87,5 +100,6 @@ module.exports = {
   getCache,
   getCards,
   getImage,
+  getImportStatus,
   saveCards,
 };
