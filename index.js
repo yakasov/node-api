@@ -3,11 +3,12 @@ const cors = require("cors");
 const http = require("http");
 const https = require("https");
 const fs = require("fs");
+const dbRoutes = require("./db/routes");
 const mecRoutes = require("./mec/routes");
 const mtgRoutes = require("./mtg/routes");
 
-const privateKey = fs.readFileSync("./sslcert/server.key", "utf8");
-const certificate = fs.readFileSync("./sslcert/server.crt", "utf8");
+const privateKey = fs.readFileSync("./sslcert/key.pem", "utf8");
+const certificate = fs.readFileSync("./sslcert/signedcrt.pem", "utf8");
 const options = { cert: certificate, key: privateKey };
 
 const app = express();
@@ -27,6 +28,7 @@ app.options("*", cors());
 app.get("/status", (req, res) => {
   res.send({ Status: "Running" });
 });
+app.use("/db", dbRoutes);
 app.use("/mec", mecRoutes);
 app.use("/mtg", mtgRoutes);
 
