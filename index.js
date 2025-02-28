@@ -3,6 +3,8 @@ const cors = require("cors");
 const http = require("http");
 const https = require("https");
 const fs = require("fs");
+
+const botRoutes = require("./bot/routes");
 const dbRoutes = require("./db/routes");
 const mecRoutes = require("./mec/routes");
 const mtgRoutes = require("./mtg/routes");
@@ -28,6 +30,7 @@ app.options("*", cors());
 app.get("/status", (req, res) => {
   res.send({ Status: "Running" });
 });
+app.use("/bot", botRoutes);
 app.use("/db", dbRoutes);
 app.use("/mec", mecRoutes);
 app.use("/mtg", mtgRoutes);
